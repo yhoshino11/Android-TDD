@@ -60,6 +60,7 @@ public class DatabaseTest {
                 .fromAction(() -> db.getUserDao().insertUsers(users))
                 .andThen(db.getUserDao().getAll())
                 .test()
+                .assertNoErrors()
                 .assertValue(users1 -> users1.size() == 2);
     }
 
@@ -74,6 +75,7 @@ public class DatabaseTest {
         Completable
                 .fromAction(() -> db.getUserDao().insertUser(user))
                 .test()
+                .assertNoErrors()
                 .assertComplete();
     }
 
@@ -86,6 +88,7 @@ public class DatabaseTest {
                 .fromAction(() -> db.getUserDao().insertUsers(users))
                 .andThen(db.getUserDao().find("a"))
                 .test()
+                .assertNoErrors()
                 .assertValue(user1 -> user1.getName().equals("a"));
     }
 }
