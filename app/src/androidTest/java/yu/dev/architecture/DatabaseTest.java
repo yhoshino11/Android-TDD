@@ -1,5 +1,6 @@
 package yu.dev.architecture;
 
+import android.arch.persistence.room.EmptyResultSetException;
 import android.arch.persistence.room.Room;
 import android.content.Context;
 import android.support.test.InstrumentationRegistry;
@@ -9,8 +10,9 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import static org.junit.Assert.*;
 import java.io.IOException;
+
+import io.reactivex.Completable;
 
 import yu.dev.architecture.Database.ApplicationDatabase;
 import yu.dev.architecture.Database.User;
@@ -39,28 +41,51 @@ public class DatabaseTest {
     }
 
     @Test
-    public void findByName() throws Exception {
-        User user = new User("a");
-        db.getUserDao().insertUser(user);
-        User result = db.getUserDao().findByName("a");
-        assertEquals("a", result.getName());
-    }
-
-    @Test
     public void insertUsers() throws Exception {
         User[] users = new User[2];
         users[0] = new User("a");
         users[1] = new User("b");
-        db.getUserDao().insertUsers(users);
-        User[] userList = db.getUserDao().getAll();
-        assertEquals(2, userList.length);
-        assertEquals("a", userList[0].getName());
+        Completable
+                .fromAction(() -> db.getUserDao().insertUsers(users))
+                .test()
+                .assertComplete();
+    }
+
+    @Test
+    public void getAll() throws Exception {
+        User[] users = new User[2];
+        users[0] = new User("a");
+        users[1] = new User("b");
+        Completable
+                .fromAction(() -> db.getUserDao().insertUsers(users))
+                .andThen(db.getUserDao().getAll())
+                .test()
+                .assertValue(users1 -> users1.size() == 2);
+    }
+
+    @Test
+    public void findWithInvalid() throws Exception {
+        db.getUserDao().find("c").test().assertError(EmptyResultSetException.class);
+    }
+
+    @Test
+    public void insertUser() throws Exception {
+        User user = new User("a");
+        Completable
+                .fromAction(() -> db.getUserDao().insertUser(user))
+                .test()
+                .assertComplete();
     }
 
     @Test
     public void find() throws Exception {
-        User user = new User("a");
-        db.getUserDao().insertUser(user);
-        db.getUserDao().find("a").test().assertValue(user1 -> user1.getName().equals("a"));
+        User[] users = new User[2];
+        users[0] = new User("a");
+        users[1] = new User("b");
+        Completable
+                .fromAction(() -> db.getUserDao().insertUsers(users))
+                .andThen(db.getUserDao().find("a"))
+                .test()
+                .assertValue(user1 -> user1.getName().equals("a"));
     }
 }

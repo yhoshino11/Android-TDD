@@ -4,6 +4,7 @@ import android.support.annotation.VisibleForTesting;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import io.reactivex.Completable;
 import io.reactivex.Observable;
@@ -31,12 +32,18 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void insertAndFetchUser() {
-        appDB.getUserDao().insertUser(new User("a"));
-        appDB.getUserDao()
-                .find("a")
+        Completable
+                .fromAction(() -> appDB.getUserDao().insertUser(new User("a")))
+                .andThen(appDB.getUserDao().find("foobar"))
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(user -> showUserName(user.getName()));
+                .subscribe(
+                        user -> showUserName(user.getName()),
+                        throwable -> showErrorMessage());
+    }
+
+    public void showErrorMessage() {
+        hello.setText(getString(R.string.error));
     }
 
     public void showUserName(String name) {

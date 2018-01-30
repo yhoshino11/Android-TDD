@@ -49,6 +49,7 @@ public class MainActivityTest {
     @Test
     public void syncUser() throws Exception {
         main.getActivity().insertAndFetchUser();
-        onView(withText("a")).check(matches(isDisplayed()));
+//        onView(withText("foobar")).check(matches(isDisplayed()));
+        onView(withText("Error")).check(matches(isDisplayed()));
     }
 }
