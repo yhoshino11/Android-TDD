@@ -56,4 +56,11 @@ public class DatabaseTest {
         assertEquals(2, userList.length);
         assertEquals("a", userList[0].getName());
     }
+
+    @Test
+    public void find() throws Exception {
+        User user = new User("a");
+        db.getUserDao().insertUser(user);
+        db.getUserDao().find("a").test().assertValue(user1 -> user1.getName().equals("a"));
+    }
 }

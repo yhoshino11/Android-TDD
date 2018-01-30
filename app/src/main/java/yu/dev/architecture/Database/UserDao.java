@@ -4,6 +4,9 @@ import android.arch.persistence.room.Dao;
 import android.arch.persistence.room.Insert;
 import android.arch.persistence.room.Query;
 
+import io.reactivex.Observable;
+import io.reactivex.Single;
+
 /**
  * Created by yuhoshino on 2018/01/30.
  */
@@ -21,4 +24,7 @@ public interface UserDao {
 
     @Query("SELECT * FROM users")
     User[] getAll();
+
+    @Query("SELECT * FROM users WHERE name = :name LIMIT 1")
+    Single<User> find(String name);
 }
