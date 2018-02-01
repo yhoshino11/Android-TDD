@@ -1,4 +1,4 @@
-package yu.dev.architecture;
+package yu.dev.architecture.Database;
 
 import android.arch.core.executor.testing.InstantTaskExecutorRule;
 import android.arch.persistence.room.Room;

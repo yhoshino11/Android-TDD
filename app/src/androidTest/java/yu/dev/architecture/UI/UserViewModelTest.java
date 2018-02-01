@@ -1,4 +1,4 @@
-package yu.dev.architecture;
+package yu.dev.architecture.UI;
 
 import android.arch.core.executor.testing.InstantTaskExecutorRule;
 import android.support.test.runner.AndroidJUnit4;

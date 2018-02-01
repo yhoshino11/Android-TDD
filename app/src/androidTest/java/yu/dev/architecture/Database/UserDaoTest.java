@@ -1,4 +1,4 @@
-package yu.dev.architecture;
+package yu.dev.architecture.Database;
 
 import android.arch.core.executor.testing.InstantTaskExecutorRule;
 import android.arch.persistence.room.Room;
@@ -24,7 +24,7 @@ import yu.dev.architecture.Database.UserDao;
  */
 
 @RunWith(AndroidJUnit4.class)
-public class UserDAOTest {
+public class UserDaoTest {
 
     @Rule
     public InstantTaskExecutorRule instantTaskExecutorRule = new InstantTaskExecutorRule();

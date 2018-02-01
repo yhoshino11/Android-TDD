@@ -1,4 +1,4 @@
-package yu.dev.architecture.Fragments;
+package yu.dev.architecture.UI.Fragments;
 
 import android.arch.persistence.room.Room;
 import android.content.Context;

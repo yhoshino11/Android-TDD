@@ -1,8 +1,9 @@
-package yu.dev.architecture;
+package yu.dev.architecture.UI;
 
 import android.arch.persistence.room.Room;
 import android.content.Context;
 import android.support.test.InstrumentationRegistry;
+import android.support.test.espresso.matcher.ViewMatchers;
 import android.support.test.rule.ActivityTestRule;
 import android.support.test.runner.AndroidJUnit4;
 
@@ -13,6 +14,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import yu.dev.architecture.Database.ApplicationDatabase;
+import yu.dev.architecture.R;
 import yu.dev.architecture.UI.MainActivity;
 
 import static android.support.test.espresso.Espresso.onView;
@@ -48,6 +50,6 @@ public class MainActivityTest {
 
     @Test
     public void showMainFragment() throws Exception {
-        onView(withText(R.string.main_fragment)).check(matches(isDisplayed()));
+        onView(ViewMatchers.withText(R.string.main_fragment)).check(matches(isDisplayed()));
     }
 }
