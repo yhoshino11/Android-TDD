@@ -1,6 +1,6 @@
 package yu.dev.architecture;
 
-import android.arch.persistence.room.EmptyResultSetException;
+import android.arch.core.executor.testing.InstantTaskExecutorRule;
 import android.arch.persistence.room.Room;
 import android.content.Context;
 import android.support.test.InstrumentationRegistry;
@@ -8,6 +8,7 @@ import android.support.test.runner.AndroidJUnit4;
 
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import java.io.IOException;
@@ -16,16 +17,21 @@ import io.reactivex.Completable;
 
 import yu.dev.architecture.Database.ApplicationDatabase;
 import yu.dev.architecture.Database.User;
+import yu.dev.architecture.Database.UserDao;
 
 /**
  * Created by yuhoshino on 2018/01/30.
  */
 
 @RunWith(AndroidJUnit4.class)
-public class DatabaseTest {
+public class UserDAOTest {
+
+    @Rule
+    public InstantTaskExecutorRule instantTaskExecutorRule = new InstantTaskExecutorRule();
 
     private Context context = InstrumentationRegistry.getTargetContext();
     private ApplicationDatabase db;
+    private UserDao userDao;
 
     @Before
     public void initDb() throws Exception {
@@ -33,6 +39,7 @@ public class DatabaseTest {
                 .fallbackToDestructiveMigration()
                 .allowMainThreadQueries()
                 .build();
+        userDao = db.getUserDao();
     }
 
     @After
@@ -41,24 +48,13 @@ public class DatabaseTest {
     }
 
     @Test
-    public void insertUsers() throws Exception {
-        User[] users = new User[2];
-        users[0] = new User("a");
-        users[1] = new User("b");
-        Completable
-                .fromAction(() -> db.getUserDao().insertUsers(users))
-                .test()
-                .assertComplete();
-    }
-
-    @Test
     public void getAll() throws Exception {
         User[] users = new User[2];
-        users[0] = new User("a");
+        users[0] = new User("a.txt");
         users[1] = new User("b");
-        Completable
-                .fromAction(() -> db.getUserDao().insertUsers(users))
-                .andThen(db.getUserDao().getAll())
+        userDao.insertUser(users[0]);
+        userDao.insertUser(users[1]);
+        userDao.getAll()
                 .test()
                 .assertNoErrors()
                 .assertValue(users1 -> users1.size() == 2);
@@ -66,14 +62,14 @@ public class DatabaseTest {
 
     @Test
     public void findWithInvalid() throws Exception {
-        db.getUserDao().find("c").test().assertError(EmptyResultSetException.class);
+        userDao.find("a.txt").test().assertEmpty();
     }
 
     @Test
     public void insertUser() throws Exception {
-        User user = new User("a");
+        User user = new User("a.txt");
         Completable
-                .fromAction(() -> db.getUserDao().insertUser(user))
+                .fromAction(() -> userDao.insertUser(user))
                 .test()
                 .assertNoErrors()
                 .assertComplete();
@@ -82,13 +78,14 @@ public class DatabaseTest {
     @Test
     public void find() throws Exception {
         User[] users = new User[2];
-        users[0] = new User("a");
+        users[0] = new User("a.txt");
         users[1] = new User("b");
-        Completable
-                .fromAction(() -> db.getUserDao().insertUsers(users))
-                .andThen(db.getUserDao().find("a"))
+        userDao.insertUser(users[0]);
+        userDao.insertUser(users[1]);
+
+        userDao.find("a.txt")
                 .test()
                 .assertNoErrors()
-                .assertValue(user1 -> user1.getName().equals("a"));
+                .assertValue(user1 -> user1.getName().equals("a.txt"));
     }
 }

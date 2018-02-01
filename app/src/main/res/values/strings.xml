@@ -1,9 +1,11 @@
 <resources>
     <string name="app_name">Architecture</string>
     <string name="hello">Hello World!</string>
+    <string name="create">Create</string>
     <string name="error">Error</string>
     <string name="dummyName">foobar</string>
 
     <!-- TODO: Remove or change this placeholder text -->
     <string name="main_fragment">at main_fragment</string>
+    <string name="placeholder">Name</string>
 </resources>

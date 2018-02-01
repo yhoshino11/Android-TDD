@@ -13,6 +13,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import yu.dev.architecture.Database.ApplicationDatabase;
+import yu.dev.architecture.UI.MainActivity;
 
 import static android.support.test.espresso.Espresso.onView;
 import static android.support.test.espresso.assertion.ViewAssertions.matches;
@@ -27,9 +28,9 @@ public class MainActivityTest {
 
     @Rule
     public ActivityTestRule<MainActivity> main = new ActivityTestRule<>(MainActivity.class);
+
     private Context context = InstrumentationRegistry.getTargetContext();
     ApplicationDatabase db;
-
 
     @Before
     public void initDB() throws Exception {
@@ -38,7 +39,6 @@ public class MainActivityTest {
                 .fallbackToDestructiveMigration()
                 .allowMainThreadQueries()
                 .build();
-        main.getActivity().setDatabase(db);
     }
 
     @After
