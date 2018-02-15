@@ -24,6 +24,7 @@ public class MainActivity extends AppCompatActivity {
     private final CompositeDisposable disposable = new CompositeDisposable();
     ViewModelFactory mViewModelFactory;
     UserViewModel mViewModel;
+    ItemViewModel mItemViewModel;
 
     String latestName = "";
 
@@ -32,6 +33,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         mViewModelFactory = Injection.provideViewModelFactory(this);
         mViewModel = ViewModelProviders.of(this, mViewModelFactory).get(UserViewModel.class);
+        mItemViewModel = ViewModelProviders.of(this, mViewModelFactory).get(ItemViewModel.class);
 
         setContentView(R.layout.activity_main);
         ActionBar actionBar = getSupportActionBar();
@@ -62,7 +64,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onStart() {
         super.onStart();
-        mViewModel.getTyping().observe(this, isTyping -> {
+        mItemViewModel.getTyping().observe(this, isTyping -> {
             ActionBar actionBar = getSupportActionBar();
             if (actionBar != null) {
                 if (isTyping) {

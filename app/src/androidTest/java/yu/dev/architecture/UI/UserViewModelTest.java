@@ -51,6 +51,11 @@ public class UserViewModelTest {
     }
 
     @Test
+    public void completableErrorTest() throws InterruptedException {
+        mViewModel.raiseError().test().assertErrorMessage("ERROR");
+    }
+
+    @Test
     public void latestInvalid() throws InterruptedException {
         when(mDataSource.latest()).thenReturn(Flowable.empty());
         mViewModel.latestName()

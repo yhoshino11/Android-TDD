@@ -11,13 +11,13 @@ public class Repository {
     private String description;
 
     public String getName() {
-        return name;
+        return this.name;
     }
     public void setName(String name) {
         this.name = name;
     }
     public String getDescription() {
-        return description;
+        return this.description;
     }
     public void setDescription(String description) {
         this.description = description;

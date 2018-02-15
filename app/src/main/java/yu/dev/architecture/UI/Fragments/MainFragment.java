@@ -4,6 +4,7 @@ package yu.dev.architecture.UI.Fragments;
 import android.arch.lifecycle.ViewModelProviders;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v7.view.menu.MenuView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -21,6 +22,7 @@ import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.schedulers.Schedulers;
 import yu.dev.architecture.Injection;
 import yu.dev.architecture.R;
+import yu.dev.architecture.UI.ItemViewModel;
 import yu.dev.architecture.UI.UserViewModel;
 import yu.dev.architecture.UI.ViewModelFactory;
 
@@ -37,6 +39,7 @@ public class MainFragment extends Fragment {
     private final CompositeDisposable disposable = new CompositeDisposable();
     ViewModelFactory mViewModelFactory;
     UserViewModel mViewModel;
+    ItemViewModel mItemViewModel;
 
     public MainFragment() {}
 
@@ -46,6 +49,7 @@ public class MainFragment extends Fragment {
 
         mViewModelFactory = Injection.provideViewModelFactory(getActivity());
         mViewModel = ViewModelProviders.of(getActivity(), mViewModelFactory).get(UserViewModel.class);
+        mItemViewModel = ViewModelProviders.of(getActivity(), mViewModelFactory).get(ItemViewModel.class);
     }
 
     @Override
@@ -84,7 +88,7 @@ public class MainFragment extends Fragment {
         textState
                 .map(inputText -> inputText.length() > 0)
                 .subscribe(
-                        hasText -> mViewModel.setTyping(hasText),
+                        hasText -> mItemViewModel.setTyping(hasText),
                         throwable -> {},
                         () -> {});
 

@@ -3,6 +3,7 @@ package yu.dev.architecture.UI;
 import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.MutableLiveData;
 import android.arch.lifecycle.ViewModel;
+import android.util.Log;
 
 import java.util.List;
 
@@ -19,22 +20,10 @@ import yu.dev.architecture.Database.User;
 public class UserViewModel extends ViewModel {
 
     private final LocalUserDataSource mUserDataSource;
-
     private User mUser;
-    private int count;
-    private MutableLiveData<Boolean> typing = new MutableLiveData<>();
 
     public UserViewModel(LocalUserDataSource source) {
         mUserDataSource = source;
-        typing.setValue(false);
-    }
-
-    public void setTyping(boolean isTyping) {
-        typing.setValue(isTyping);
-    }
-
-    public LiveData<Boolean> getTyping() {
-        return typing;
     }
 
     public Flowable<User> getUser(String name) {
@@ -55,10 +44,13 @@ public class UserViewModel extends ViewModel {
         });
     }
 
-    public Flowable<Integer> getCount() {
-        return mUserDataSource.getUsers().map(users -> {
-            count = users.size();
-            return users.size();
+    public Completable raiseError() {
+        return Completable.fromAction(() -> {
+            throw new Error("ERROR");
         });
+    }
+
+    public Flowable<Integer> getCount() {
+        return mUserDataSource.getUsers().map(users -> users.size());
     }
 }

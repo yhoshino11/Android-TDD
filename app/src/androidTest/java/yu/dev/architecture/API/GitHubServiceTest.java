@@ -19,6 +19,7 @@ import okhttp3.mockwebserver.MockWebServer;
 import okhttp3.mockwebserver.RecordedRequest;
 import okio.BufferedSource;
 import okio.Okio;
+import retrofit2.HttpException;
 
 /**
  * Created by yuhoshino on 2018/02/01.
@@ -46,14 +47,17 @@ public class GitHubServiceTest {
                                 .addHeader("Cache-Control", "no-cache")
                                 .setResponseCode(200)
                                 .setBody(responseBodyFromFile("repo.json"));
-                    case "repos/yhoshino11/.dotfiles/contributors":
+                    case "repos/yhoshino11/ArchLinux/contributors":
                         return new MockResponse()
                                 .addHeader("Content-Type", "application/json; charset=utf-8")
                                 .addHeader("Cache-Control", "no-cache")
                                 .setResponseCode(200)
                                 .setBody(responseBodyFromFile("contributor.json"));
                     default:
-                        return new MockResponse().setResponseCode(404);
+                        return new MockResponse()
+                                .addHeader("Content-Type", "application/json; charset=utf-8")
+                                .addHeader("Cache-Control", "no-cache")
+                                .setResponseCode(404);
                 }
             }
         };
@@ -70,15 +74,44 @@ public class GitHubServiceTest {
     @Test
     public void repos() throws Exception {
         gitHubService.listRepos("yhoshino11")
-                .map(repositories -> repositories.get(0))
+                .map(repositories -> repositories.get(6))
                 .map(Repository::getName)
                 .test()
-                .assertValue(s -> s.equals(".dotfiles"));
+                .assertValue(s -> s.equals("ArchLinux"));
+    }
+
+    @Test
+    public void getContributors() throws Exception {
+        gitHubService.listRepos("yhoshino11")
+                .map(repositories -> repositories.get(6))
+                .map(Repository::getName)
+                .flatMap(name -> gitHubService.listContributors("yhoshino11", name))
+                .test()
+                .assertValue(contributors -> contributors.size() == 2);
+    }
+
+    @Test
+    public void getRepoDescription() throws Exception {
+        gitHubService.listRepos("yhoshino11")
+                .map(repositories -> repositories.get(6))
+                .map(Repository::getDescription)
+                .test()
+                .assertValue(description -> description.equals("my minimum Arch Linux Installution"));
+    }
+
+    @Test
+    public void forbidden() throws Exception {
+        gitHubService.listRepos("")
+                .test()
+                .assertError(HttpException.class);
+        gitHubService.listRepos("")
+                .test()
+                .assertError(throwable -> ((HttpException)throwable).code() == 404);
     }
 
     @Test
     public void contributors() throws Exception {
-        gitHubService.listContributors("yhoshino11", ".dotfiles")
+        gitHubService.listContributors("yhoshino11", "ArchLinux")
                 .map(contributors -> contributors.get(0))
                 .test()
                 .assertValue(contributor -> contributor.getName().equals("yhoshino11"));
